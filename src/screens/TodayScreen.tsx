@@ -59,9 +59,9 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     };
 
     return (
-        <div className="p-4 space-y-6">
+        <div className="px-4 pt-12 pb-4 space-y-4">
             {/* Date Timeline */}
-            <div ref={scrollContainerRef} className="flex overflow-x-auto pb-4 -mx-4 px-4 space-x-2 no-scrollbar">
+            <div ref={scrollContainerRef} className="flex overflow-x-auto pb-2 -mx-4 px-4 space-x-2 no-scrollbar">
                 {timelineDates.map((dateStr) => {
                     const date = parseISO(dateStr);
                     const isSelected = dateStr === selectedDate;
