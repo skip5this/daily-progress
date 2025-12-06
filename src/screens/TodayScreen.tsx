@@ -41,6 +41,9 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const todayRef = useRef<HTMLButtonElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
 
     useEffect(() => {
         if (todayRef.current && scrollContainerRef.current) {
@@ -55,13 +58,45 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     }, []);
 
     const handleDateSelect = (date: string) => {
-        setSelectedDate(date);
+        if (!isDragging) {
+            setSelectedDate(date);
+        }
+    };
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (!scrollContainerRef.current) return;
+        setIsDragging(true);
+        setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
+        setScrollLeft(scrollContainerRef.current.scrollLeft);
+    };
+
+    const handleMouseLeave = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging || !scrollContainerRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - scrollContainerRef.current.offsetLeft;
+        const walk = (x - startX) * 2; // Scroll-fast
+        scrollContainerRef.current.scrollLeft = scrollLeft - walk;
     };
 
     return (
         <div className="px-4 pt-12 pb-4 space-y-4">
             {/* Date Timeline */}
-            <div ref={scrollContainerRef} className="flex overflow-x-auto py-4 -mx-4 px-4 space-x-2 no-scrollbar">
+            <div
+                ref={scrollContainerRef}
+                className={`flex overflow-x-auto py-4 -mx-4 px-4 space-x-2 no-scrollbar ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                onMouseDown={handleMouseDown}
+                onMouseLeave={handleMouseLeave}
+                onMouseUp={handleMouseUp}
+                onMouseMove={handleMouseMove}
+            >
                 {timelineDates.map((dateStr) => {
                     const date = parseISO(dateStr);
                     const isSelected = dateStr === selectedDate;
