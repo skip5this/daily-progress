@@ -18,6 +18,16 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [state, setState] = useLocalStorage<AppState>('daily-progress-v1', INITIAL_STATE);
 
+    // Migration: Force weight unit to 'lb' if it's currently 'kg'
+    React.useEffect(() => {
+        if (state.settings.weightUnitLabel === 'kg') {
+            setState(prev => ({
+                ...prev,
+                settings: { ...prev.settings, weightUnitLabel: 'lb' }
+            }));
+        }
+    }, [state.settings.weightUnitLabel, setState]);
+
     const updateDailyMetrics = (date: string, metrics: Partial<DailyMetricsEntry>) => {
         setState((prev) => {
             const currentEntry = prev.dailyMetrics[date] || { date, weight: null, steps: null };

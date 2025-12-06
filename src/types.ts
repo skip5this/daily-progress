@@ -33,7 +33,7 @@ export type AppState = {
 };
 
 export const DEFAULT_SETTINGS: Settings = {
-    weightUnitLabel: "kg",
+    weightUnitLabel: "lb",
 };
 
 export const INITIAL_STATE: AppState = {
