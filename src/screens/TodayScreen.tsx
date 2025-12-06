@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { format, addDays, isSameDay, parseISO } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, Dumbbell } from 'lucide-react';
+import { format, subDays, isSameDay, parseISO } from 'date-fns';
+import { Plus, Dumbbell } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
@@ -18,11 +18,6 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     const currentDateMetrics = state.dailyMetrics[selectedDate] || { weight: '', steps: '' };
     const currentWorkouts = state.workouts.filter((w) => w.date === selectedDate);
 
-    const handleDateChange = (days: number) => {
-        const newDate = addDays(parseISO(selectedDate), days);
-        setSelectedDate(format(newDate, 'yyyy-MM-dd'));
-    };
-
     const handleMetricChange = (metric: 'weight' | 'steps', value: string) => {
         const numValue = value === '' ? null : Number(value);
         updateDailyMetrics(selectedDate, { [metric]: numValue });
@@ -38,22 +33,44 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
         onOpenWorkout(newWorkout.id);
     };
 
+    // Generate dates for the timeline (past 14 days + next 7 days)
+    const timelineDates = Array.from({ length: 22 }, (_, i) => {
+        const d = subDays(new Date(), 14 - i);
+        return format(d, 'yyyy-MM-dd');
+    });
+
+    const handleDateSelect = (date: string) => {
+        setSelectedDate(date);
+    };
+
     return (
         <div className="p-4 space-y-6">
-            {/* Date Navigation */}
-            <div className="flex items-center justify-between mb-6">
-                <button onClick={() => handleDateChange(-1)} className="p-2 hover:bg-gray-800 rounded-full">
-                    <ChevronLeft size={24} />
-                </button>
-                <div className="text-center">
-                    <h2 className="text-lg font-bold text-white">
-                        {isSameDay(parseISO(selectedDate), new Date()) ? 'Today' : format(parseISO(selectedDate), 'MMM d, yyyy')}
-                    </h2>
-                    <p className="text-xs text-gray-400">{format(parseISO(selectedDate), 'EEEE')}</p>
-                </div>
-                <button onClick={() => handleDateChange(1)} className="p-2 hover:bg-gray-800 rounded-full">
-                    <ChevronRight size={24} />
-                </button>
+            {/* Date Timeline */}
+            <div className="flex overflow-x-auto pb-4 -mx-4 px-4 space-x-2 no-scrollbar">
+                {timelineDates.map((dateStr) => {
+                    const date = parseISO(dateStr);
+                    const isSelected = dateStr === selectedDate;
+                    const isToday = isSameDay(date, new Date());
+
+                    return (
+                        <button
+                            key={dateStr}
+                            onClick={() => handleDateSelect(dateStr)}
+                            className={`flex flex-col items-center justify-center min-w-[60px] h-[70px] rounded-xl transition-all ${isSelected
+                                ? 'bg-blue-600 text-white shadow-lg scale-105'
+                                : 'bg-[#2a2a2a] text-gray-400 hover:bg-[#333]'
+                                } ${isToday && !isSelected ? 'border border-blue-500/30' : ''}`}
+                        >
+                            <span className="text-xs font-medium mb-1">{format(date, 'EEE')}</span>
+                            <span className={`text-lg font-bold ${isSelected ? 'text-white' : 'text-gray-200'}`}>
+                                {format(date, 'd')}
+                            </span>
+                            {isToday && (
+                                <div className={`w-1 h-1 rounded-full mt-1 ${isSelected ? 'bg-white' : 'bg-blue-500'}`} />
+                            )}
+                        </button>
+                    );
+                })}
             </div>
 
             {/* Daily Metrics */}
