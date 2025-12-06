@@ -58,7 +58,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             onClick={() => handleDateSelect(dateStr)}
                             className={`flex flex-col items-center justify-center min-w-[60px] h-[70px] rounded-xl transition-all ${isSelected
                                 ? 'bg-blue-600 text-white shadow-lg scale-105'
-                                : 'bg-[#2a2a2a] text-gray-400 hover:bg-[#333]'
+                                : 'text-gray-400 hover:bg-[#2a2a2a]'
                                 } ${isToday && !isSelected ? 'border border-blue-500/30' : ''}`}
                         >
                             <span className="text-xs font-medium mb-1">{format(date, 'EEE')}</span>
