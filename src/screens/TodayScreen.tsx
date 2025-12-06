@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { format, subDays, isSameDay, parseISO } from 'date-fns';
 import { Plus, Dumbbell } from 'lucide-react';
 import { useApp } from '../context/AppContext';
@@ -39,6 +39,15 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
         return format(d, 'yyyy-MM-dd');
     });
 
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const todayRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        if (todayRef.current) {
+            todayRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
+        }
+    }, []);
+
     const handleDateSelect = (date: string) => {
         setSelectedDate(date);
     };
@@ -46,7 +55,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     return (
         <div className="p-4 space-y-6">
             {/* Date Timeline */}
-            <div className="flex overflow-x-auto pb-4 -mx-4 px-4 space-x-2 no-scrollbar">
+            <div ref={scrollContainerRef} className="flex overflow-x-auto pb-4 -mx-4 px-4 space-x-2 no-scrollbar">
                 {timelineDates.map((dateStr) => {
                     const date = parseISO(dateStr);
                     const isSelected = dateStr === selectedDate;
@@ -55,6 +64,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                     return (
                         <button
                             key={dateStr}
+                            ref={isToday ? todayRef : null}
                             onClick={() => handleDateSelect(dateStr)}
                             className={`flex flex-col items-center justify-center min-w-[60px] h-[70px] rounded-xl transition-all ${isSelected
                                 ? 'bg-blue-600 text-white shadow-lg scale-105'
