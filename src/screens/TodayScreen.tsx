@@ -43,8 +43,14 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     const todayRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
-        if (todayRef.current) {
-            todayRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'end' });
+        if (todayRef.current && scrollContainerRef.current) {
+            const container = scrollContainerRef.current;
+            const element = todayRef.current;
+
+            // Calculate scroll position to align right edge + 16px offset
+            const scrollLeft = element.offsetLeft + element.offsetWidth - container.clientWidth + 16;
+
+            container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
         }
     }, []);
 
