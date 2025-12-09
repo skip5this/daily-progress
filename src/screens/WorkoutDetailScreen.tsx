@@ -97,7 +97,7 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                         {format(parseISO(workout.date), 'MMM d, yyyy')}
                     </h2>
                 </div>
-                <button onClick={handleDeleteWorkout} className="p-2 -mr-2 hover:bg-red-900/20 rounded-full text-red-500">
+                <button onClick={handleDeleteWorkout} className="p-2 -mr-2 hover:bg-gray-800 rounded-full text-gray-400 hover:text-red-500">
                     <Trash2 size={20} />
                 </button>
             </div>
@@ -116,7 +116,7 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
             <div className="space-y-6">
                 {workout.exercises.map((exercise) => (
                     <Card key={exercise.id} className="relative group">
-                        <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center justify-between mb-4 gap-4 group/header">
                             <Input
                                 value={exercise.name}
                                 onChange={(e) => updateExercise(exercise.id, { name: e.target.value })}
@@ -125,25 +125,25 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                             />
                             <button
                                 onClick={() => deleteExercise(exercise.id)}
-                                className="p-1 text-gray-600 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-500 transition-colors"
                             >
                                 <Trash2 size={16} />
                             </button>
                         </div>
 
-                        <div className="space-y-2 pl-2 border-l-2 border-gray-800">
+                        <div className="space-y-2 pl-2">
                             {exercise.sets.map((set, index) => (
-                                <div key={set.id} className="flex items-center gap-2 group/set">
+                                <div key={set.id} className="flex items-center gap-4 group/set">
                                     <span className="text-xs text-gray-500 w-6 text-right">{index + 1}</span>
                                     <Input
                                         value={set.note}
                                         onChange={(e) => updateSet(exercise.id, set.id, e.target.value)}
                                         placeholder="Set details (e.g. 12 x 135)"
-                                        className="flex-1 py-1 text-sm bg-transparent border-b border-gray-800 rounded-none px-0 focus:ring-0 focus:border-blue-500"
+                                        className="w-full py-1.5 text-sm border-transparent focus:border-gray-600"
                                     />
                                     <button
                                         onClick={() => deleteSet(exercise.id, set.id)}
-                                        className="p-1 text-gray-700 hover:text-red-500 opacity-0 group-hover/set:opacity-100 transition-opacity"
+                                        className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-red-500 opacity-0 pointer-events-none group-focus-within/set:opacity-100 group-focus-within/set:pointer-events-auto group-hover/set:opacity-100 group-hover/set:pointer-events-auto transition-opacity"
                                     >
                                         <Trash2 size={14} />
                                     </button>
@@ -151,7 +151,7 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                             ))}
                             <button
                                 onClick={() => addSet(exercise.id)}
-                                className="flex items-center gap-2 text-xs text-blue-500 hover:text-blue-400 mt-2 py-1 px-2 rounded hover:bg-blue-500/10 transition-colors"
+                                className="flex items-center gap-2 text-xs text-primary hover:text-primary-hover mt-2 py-1 px-2 rounded hover:bg-primary/10 transition-colors"
                             >
                                 <Plus size={14} />
                                 Add Set

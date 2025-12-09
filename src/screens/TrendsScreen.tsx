@@ -34,7 +34,7 @@ export const TrendsScreen: React.FC = () => {
                             key={tf}
                             onClick={() => setTimeframe(tf)}
                             className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${timeframe === tf
-                                ? 'bg-blue-600 text-white'
+                                ? 'bg-primary text-primary-foreground'
                                 : 'text-gray-400 hover:text-white'
                                 }`}
                         >
@@ -71,9 +71,9 @@ export const TrendsScreen: React.FC = () => {
                                 <Line
                                     type="monotone"
                                     dataKey="weight"
-                                    stroke="#3b82f6"
+                                    stroke="#C9F2D0"
                                     strokeWidth={2}
-                                    dot={{ r: 3, fill: '#3b82f6' }}
+                                    dot={{ r: 3, fill: '#C9F2D0' }}
                                     activeDot={{ r: 6 }}
                                     connectNulls
                                 />

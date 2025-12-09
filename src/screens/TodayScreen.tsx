@@ -87,7 +87,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     };
 
     return (
-        <div className="px-4 pt-12 pb-4 space-y-4">
+        <div className="px-4 pt-6 pb-4 space-y-4">
             {/* Date Timeline */}
             <div
                 ref={scrollContainerRef}
@@ -110,19 +110,17 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             key={dateStr}
                             ref={isToday ? todayRef : null}
                             onClick={() => handleDateSelect(dateStr)}
-                            className={`flex flex-col items-center justify-center min-w-[60px] h-[70px] rounded-xl transition-all ${isSelected
-                                ? 'text-blue-500 border border-blue-500/50 bg-blue-500/10 scale-105'
-                                : 'text-gray-400 hover:bg-[#2a2a2a]'
-                                } ${isToday && !isSelected ? 'border border-blue-500/30' : ''}`}
+                            className={`flex flex-col items-center justify-start pt-3 min-w-[60px] h-[80px] rounded-xl transition-all ${isSelected
+                                ? 'text-primary-950 bg-primary-200 scale-105'
+                                : 'text-gray-400 hover:bg-gray-800'
+                                } ${isToday && !isSelected ? 'border border-gray-700' : ''}`}
                         >
                             <span className="text-xs font-medium mb-1">{format(date, 'EEE')}</span>
-                            <span className={`text-lg font-bold ${isSelected ? 'text-blue-500' : 'text-gray-200'}`}>
+                            <span className={`text-lg font-bold ${isSelected ? 'text-primary-950' : 'text-gray-200'}`}>
                                 {format(date, 'd')}
                             </span>
-                            {isToday ? (
-                                <div className="w-1 h-1 rounded-full mt-1 bg-blue-500" />
-                            ) : hasData ? (
-                                <div className="w-1 h-1 rounded-full mt-1 bg-gray-600" />
+                            {hasData ? (
+                                <div className={`w-1 h-1 rounded-full mt-1 ${isSelected ? 'bg-primary-900' : 'bg-primary-200'}`} />
                             ) : null}
                         </button>
                     );
@@ -171,10 +169,10 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             <button
                                 key={workout.id}
                                 onClick={() => onOpenWorkout(workout.id)}
-                                className="w-full flex items-center p-3 bg-[#1a1a1a] rounded-lg hover:bg-gray-800 transition-colors text-left group"
+                                className="w-full flex items-center p-3 bg-[#1a1a1a] rounded-lg hover:bg-primary-900/20 transition-colors text-left group"
                             >
-                                <div className="p-2 bg-blue-500/10 rounded-lg mr-3 group-hover:bg-blue-500/20 transition-colors">
-                                    <Dumbbell size={20} className="text-blue-500" />
+                                <div className="p-2 bg-gray-800 rounded-lg mr-3 group-hover:bg-gray-700 transition-colors">
+                                    <Dumbbell size={20} className="text-primary-200" />
                                 </div>
                                 <div>
                                     <h4 className="font-medium text-gray-200">

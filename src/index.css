@@ -1,5 +1,48 @@
 @import "tailwindcss";
 
+@theme {
+  /* 
+    Generated scale based on Mint Green #C9F2D0 
+    Matches the "blue" scale logic: light -> dark
+  */
+  --color-primary-50: #f2fcf5;
+  --color-primary-100: #e1f8e8;
+  --color-primary-200: #c9f2d0;
+  /* User's Accent */
+  --color-primary-300: #9ee6ab;
+  --color-primary-400: #6fd685;
+  --color-primary-500: #42bf63;
+  --color-primary-600: #2ea650;
+  --color-primary-700: #258443;
+  --color-primary-800: #23683a;
+  --color-primary-900: #1e5533;
+  --color-primary-950: #0d2f1b;
+
+  /* Default aliases */
+  --color-primary: var(--color-primary-200);
+  /* Use the mint green as the main accent */
+  --color-primary-foreground: #1a1a1a;
+
+  /* Hover state - slightly darker/richer than the mint */
+  --color-primary-hover: var(--color-primary-300);
+
+  /* 
+    Redefine Gray to be "Neutral" (True Gray) 
+    to remove the blue tint of the default slate/gray 
+  */
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #e5e5e5;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a3a3a3;
+  --color-gray-500: #737373;
+  --color-gray-600: #525252;
+  --color-gray-700: #404040;
+  --color-gray-800: #262626;
+  --color-gray-900: #171717;
+  --color-gray-950: #0a0a0a;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

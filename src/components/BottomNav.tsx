@@ -15,7 +15,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate 
                     onClick={() => onNavigate('today')}
                     className={clsx(
                         'flex flex-col items-center justify-center w-full h-full space-y-1',
-                        currentScreen === 'today' ? 'text-blue-500' : 'text-gray-400'
+                        currentScreen === 'today' ? 'text-primary-200' : 'text-gray-400'
                     )}
                 >
                     <Calendar size={24} />
@@ -25,7 +25,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate 
                     onClick={() => onNavigate('trends')}
                     className={clsx(
                         'flex flex-col items-center justify-center w-full h-full space-y-1',
-                        currentScreen === 'trends' ? 'text-blue-500' : 'text-gray-400'
+                        currentScreen === 'trends' ? 'text-primary-200' : 'text-gray-400'
                     )}
                 >
                     <TrendingUp size={24} />
