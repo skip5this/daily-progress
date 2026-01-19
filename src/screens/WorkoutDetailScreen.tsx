@@ -139,7 +139,7 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                                         value={set.note}
                                         onChange={(e) => updateSet(exercise.id, set.id, e.target.value)}
                                         placeholder="Set details (e.g. 12 x 135)"
-                                        className="w-full py-1.5 text-sm border-transparent focus:border-gray-600"
+                                        className="w-full py-1.5 text-base border-transparent focus:border-gray-600"
                                     />
                                     <button
                                         onClick={() => deleteSet(exercise.id, set.id)}
