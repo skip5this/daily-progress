@@ -225,22 +225,25 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             const hasWorkout = state.workouts.some(w => w.date === dateStr);
 
                             return (
-                                <button
-                                    key={dateStr}
-                                    onClick={() => handleDateSelect(dateStr)}
-                                    className={`flex flex-col items-center justify-start pt-2 flex-1 mx-0.5 h-[72px] rounded-xl transition-all ${isSelected
-                                        ? 'text-primary-950 bg-primary-200'
-                                        : 'text-gray-400 hover:bg-gray-800'
-                                        } ${isToday && !isSelected ? 'border border-gray-700' : ''}`}
-                                >
-                                    <span className="text-xs font-medium mb-0.5">{format(date, 'EEE')}</span>
-                                    <span className={`text-lg font-bold ${isSelected ? 'text-primary-950' : 'text-gray-200'}`}>
-                                        {format(date, 'd')}
-                                    </span>
-                                    {hasWorkout ? (
-                                        <div className={`w-1 h-1 rounded-full mt-0.5 ${isSelected ? 'bg-primary-900' : 'bg-primary-200'}`} />
-                                    ) : null}
-                                </button>
+                                <div key={dateStr} className="flex flex-col items-center flex-1 mx-0.5">
+                                    <button
+                                        onClick={() => handleDateSelect(dateStr)}
+                                        className={`flex flex-col items-center justify-center w-full py-2 rounded-xl transition-all ${isSelected
+                                            ? 'text-primary-950 bg-primary-200'
+                                            : 'text-gray-400 hover:bg-gray-800'
+                                            } ${isToday && !isSelected ? 'border border-gray-700' : ''}`}
+                                    >
+                                        <span className="text-xs font-medium mb-0.5">{format(date, 'EEE')}</span>
+                                        <span className={`text-lg font-bold ${isSelected ? 'text-primary-950' : 'text-gray-200'}`}>
+                                            {format(date, 'd')}
+                                        </span>
+                                    </button>
+                                    <div className="h-3 flex items-center justify-center">
+                                        {hasWorkout && (
+                                            <div className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-primary-200' : 'bg-primary-200'}`} />
+                                        )}
+                                    </div>
+                                </div>
                             );
                         })}
                     </div>
