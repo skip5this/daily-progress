@@ -26,6 +26,14 @@ export type DailyMetricsEntry = {
     date: string;
     weight: number | null;
     steps: number | null;
+    customMetrics: Record<string, number | null>;
+};
+
+export type MetricDefinition = {
+    id: string;
+    name: string;
+    orderIndex: number;
+    isActive: boolean;
 };
 
 export type Settings = {
@@ -36,6 +44,7 @@ export type AppState = {
     dailyMetrics: { [date: string]: DailyMetricsEntry };
     workouts: Workout[];
     settings: Settings;
+    metricDefinitions: MetricDefinition[];
 };
 
 const DEFAULT_SETTINGS: Settings = {
@@ -46,6 +55,7 @@ const INITIAL_STATE: AppState = {
     dailyMetrics: {},
     workouts: [],
     settings: DEFAULT_SETTINGS,
+    metricDefinitions: [],
 };
 
 interface AppContextType {
@@ -56,6 +66,9 @@ interface AppContextType {
     updateWorkout: (workout: Workout) => void;
     deleteWorkout: (workoutId: string) => void;
     updateSettings: (settings: Partial<Settings>) => void;
+    addMetricDefinition: (name: string) => Promise<void>;
+    removeMetricDefinition: (id: string) => Promise<void>;
+    hasMetricData: (metricName: string) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -89,6 +102,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                     .select('*')
                     .eq('user_id', user.id);
 
+                // Fetch metric definitions
+                const { data: metricDefsData } = await supabase
+                    .from('metric_definitions')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('order_index', { ascending: true });
+
                 // Fetch workouts with exercises and sets
                 const { data: workoutsData } = await supabase
                     .from('workouts')
@@ -117,8 +137,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                         date: m.date,
                         weight: m.weight,
                         steps: m.steps,
+                        customMetrics: (m.custom_metrics as Record<string, number | null>) || {},
                     };
                 });
+
+                // Transform metric definitions
+                const metricDefinitions: MetricDefinition[] = (metricDefsData || []).map((md) => ({
+                    id: md.id,
+                    name: md.name,
+                    orderIndex: md.order_index,
+                    isActive: md.is_active,
+                }));
 
                 // Transform workouts to match old structure
                 const workouts: Workout[] = (workoutsData || []).map((w) => ({
@@ -145,6 +174,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                     settings: {
                         weightUnitLabel: (profile?.weight_unit as 'kg' | 'lb') || 'lb',
                     },
+                    metricDefinitions,
                 });
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -161,15 +191,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
         // Optimistic update
         setState((prev) => {
-            const currentEntry = prev.dailyMetrics[date] || { date, weight: null, steps: null };
+            const currentEntry = prev.dailyMetrics[date] || { date, weight: null, steps: null, customMetrics: {} };
+            const updatedEntry = { ...currentEntry, ...metrics };
+            if (metrics.customMetrics) {
+                updatedEntry.customMetrics = { ...currentEntry.customMetrics, ...metrics.customMetrics };
+            }
             return {
                 ...prev,
                 dailyMetrics: {
                     ...prev.dailyMetrics,
-                    [date]: { ...currentEntry, ...metrics },
+                    [date]: updatedEntry,
                 },
             };
         });
+
+        // Merge custom metrics
+        const currentCustomMetrics = state.dailyMetrics[date]?.customMetrics || {};
+        const updatedCustomMetrics = metrics.customMetrics
+            ? { ...currentCustomMetrics, ...metrics.customMetrics }
+            : currentCustomMetrics;
 
         // Sync to Supabase
         const { error } = await supabase
@@ -179,6 +219,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                 date,
                 weight: metrics.weight ?? state.dailyMetrics[date]?.weight ?? null,
                 steps: metrics.steps ?? state.dailyMetrics[date]?.steps ?? null,
+                custom_metrics: updatedCustomMetrics,
             }, {
                 onConflict: 'user_id,date',
             });
@@ -331,6 +372,118 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
     }, [user]);
 
+    const addMetricDefinition = useCallback(async (name: string) => {
+        if (!user) return;
+
+        const newOrderIndex = state.metricDefinitions.length;
+        const tempId = crypto.randomUUID();
+
+        // Optimistic update
+        setState((prev) => ({
+            ...prev,
+            metricDefinitions: [
+                ...prev.metricDefinitions,
+                { id: tempId, name, orderIndex: newOrderIndex, isActive: true },
+            ],
+        }));
+
+        // Sync to Supabase
+        const { data, error } = await supabase
+            .from('metric_definitions')
+            .insert({
+                user_id: user.id,
+                name,
+                order_index: newOrderIndex,
+                is_active: true,
+            })
+            .select()
+            .single();
+
+        if (error) {
+            console.error('Error adding metric definition:', error);
+            // Rollback on error
+            setState((prev) => ({
+                ...prev,
+                metricDefinitions: prev.metricDefinitions.filter((md) => md.id !== tempId),
+            }));
+            return;
+        }
+
+        // Update with real ID from server
+        if (data) {
+            setState((prev) => ({
+                ...prev,
+                metricDefinitions: prev.metricDefinitions.map((md) =>
+                    md.id === tempId ? { ...md, id: data.id } : md
+                ),
+            }));
+        }
+    }, [user, state.metricDefinitions.length]);
+
+    const removeMetricDefinition = useCallback(async (id: string) => {
+        if (!user) return;
+
+        const metricDef = state.metricDefinitions.find((md) => md.id === id);
+        if (!metricDef) return;
+
+        // Optimistic update - remove from definitions
+        setState((prev) => ({
+            ...prev,
+            metricDefinitions: prev.metricDefinitions.filter((md) => md.id !== id),
+        }));
+
+        // Delete from Supabase
+        const { error } = await supabase
+            .from('metric_definitions')
+            .delete()
+            .eq('id', id);
+
+        if (error) {
+            console.error('Error removing metric definition:', error);
+            return;
+        }
+
+        // Remove metric data from all daily_metrics entries
+        const metricName = metricDef.name;
+        const entriesToUpdate = Object.values(state.dailyMetrics).filter(
+            (entry) => entry.customMetrics && metricName in entry.customMetrics
+        );
+
+        // Update local state to remove metric data
+        setState((prev) => {
+            const updatedMetrics = { ...prev.dailyMetrics };
+            for (const entry of entriesToUpdate) {
+                const { [metricName]: _, ...remainingCustomMetrics } = entry.customMetrics;
+                updatedMetrics[entry.date] = {
+                    ...entry,
+                    customMetrics: remainingCustomMetrics,
+                };
+            }
+            return { ...prev, dailyMetrics: updatedMetrics };
+        });
+
+        // Update Supabase for each affected entry
+        for (const entry of entriesToUpdate) {
+            const { [metricName]: _, ...remainingCustomMetrics } = entry.customMetrics;
+            await supabase
+                .from('daily_metrics')
+                .update({ custom_metrics: remainingCustomMetrics })
+                .eq('user_id', user.id)
+                .eq('date', entry.date);
+        }
+    }, [user, state.metricDefinitions, state.dailyMetrics]);
+
+    const hasMetricData = useCallback((metricName: string): boolean => {
+        // Check if "Weight" built-in metric has data
+        if (metricName === 'Weight') {
+            return Object.values(state.dailyMetrics).some((entry) => entry.weight !== null);
+        }
+        // Check custom metrics
+        return Object.values(state.dailyMetrics).some(
+            (entry) => entry.customMetrics && entry.customMetrics[metricName] !== null && entry.customMetrics[metricName] !== undefined
+        );
+    }, [state.dailyMetrics]);
+
     return (
         <AppContext.Provider
             value={{
@@ -341,6 +494,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
                 updateWorkout,
                 deleteWorkout,
                 updateSettings,
+                addMetricDefinition,
+                removeMetricDefinition,
+                hasMetricData,
             }}
         >
             {children}

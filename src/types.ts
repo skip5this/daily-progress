@@ -2,6 +2,14 @@ export type DailyMetricsEntry = {
     date: string;        // ISO date, e.g. "2025-11-18"
     weight: number | null;
     steps: number | null;
+    customMetrics: Record<string, number | null>;
+};
+
+export type MetricDefinition = {
+    id: string;
+    name: string;
+    orderIndex: number;
+    isActive: boolean;
 };
 
 export type WorkoutSet = {
@@ -30,6 +38,7 @@ export type AppState = {
     dailyMetrics: { [date: string]: DailyMetricsEntry };
     workouts: Workout[];
     settings: Settings;
+    metricDefinitions: MetricDefinition[];
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -40,4 +49,5 @@ export const INITIAL_STATE: AppState = {
     dailyMetrics: {},
     workouts: [],
     settings: DEFAULT_SETTINGS,
+    metricDefinitions: [],
 };

@@ -43,6 +43,7 @@ export type Database = {
           date: string;
           weight: number | null;
           steps: number | null;
+          custom_metrics: Record<string, number | null>;
           created_at: string;
           updated_at: string;
         };
@@ -52,6 +53,7 @@ export type Database = {
           date: string;
           weight?: number | null;
           steps?: number | null;
+          custom_metrics?: Record<string, number | null>;
           created_at?: string;
           updated_at?: string;
         };
@@ -61,6 +63,37 @@ export type Database = {
           date?: string;
           weight?: number | null;
           steps?: number | null;
+          custom_metrics?: Record<string, number | null>;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      metric_definitions: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          order_index: number;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          order_index?: number;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string;
+          order_index?: number;
+          is_active?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -163,3 +196,4 @@ export type DailyMetric = Database['public']['Tables']['daily_metrics']['Row'];
 export type DbWorkout = Database['public']['Tables']['workouts']['Row'];
 export type DbExercise = Database['public']['Tables']['exercises']['Row'];
 export type DbWorkoutSet = Database['public']['Tables']['workout_sets']['Row'];
+export type DbMetricDefinition = Database['public']['Tables']['metric_definitions']['Row'];
