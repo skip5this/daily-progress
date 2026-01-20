@@ -1,4 +1,3 @@
-// import React from 'react';
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Card } from '../components/ui/Card';
@@ -17,7 +16,7 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
     const workout = state.workouts.find((w) => w.id === workoutId);
 
     if (!workout) {
-        return <div className="p-4">Workout not found</div>;
+        return <div className="p-4" style={{ color: 'var(--foreground)' }}>Workout not found</div>;
     }
 
     const handleNameChange = (name: string) => {
@@ -89,15 +88,23 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
         <div className="p-4 pb-24 space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <button onClick={onClose} className="p-2 -ml-2 hover:bg-gray-800 rounded-full text-gray-400 hover:text-white">
+                <button
+                    onClick={onClose}
+                    className="p-2 -ml-2 rounded-full transition-colors"
+                    style={{ color: 'var(--muted)' }}
+                >
                     <ArrowLeft size={24} />
                 </button>
                 <div className="text-center">
-                    <h2 className="text-sm font-medium text-gray-400">
+                    <h2 className="text-sm font-medium" style={{ color: 'var(--muted)' }}>
                         {format(parseISO(workout.date), 'MMM d, yyyy')}
                     </h2>
                 </div>
-                <button onClick={handleDeleteWorkout} className="p-2 -mr-2 hover:bg-gray-800 rounded-full text-gray-400 hover:text-red-500">
+                <button
+                    onClick={handleDeleteWorkout}
+                    className="p-2 -mr-2 rounded-full transition-colors"
+                    style={{ color: 'var(--muted)' }}
+                >
                     <Trash2 size={20} />
                 </button>
             </div>
@@ -108,7 +115,8 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                     value={workout.name || ''}
                     onChange={(e) => handleNameChange(e.target.value)}
                     placeholder="Workout Name (Optional)"
-                    className="text-lg font-bold bg-transparent border-none px-0 focus:ring-0 placeholder-gray-600"
+                    className="text-lg font-bold bg-transparent border-none px-0 focus:ring-0"
+                    style={{ color: 'var(--foreground)' }}
                 />
             </div>
 
@@ -122,10 +130,12 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                                 onChange={(e) => updateExercise(exercise.id, { name: e.target.value })}
                                 placeholder="Exercise Name"
                                 className="font-semibold bg-transparent border-none px-0 focus:ring-0 w-full text-base"
+                                style={{ color: 'var(--foreground)' }}
                             />
                             <button
                                 onClick={() => deleteExercise(exercise.id)}
-                                className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-500 transition-colors"
+                                className="w-8 h-8 flex items-center justify-center transition-colors"
+                                style={{ color: 'var(--muted)' }}
                             >
                                 <Trash2 size={16} />
                             </button>
@@ -134,16 +144,23 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                         <div className="space-y-2 pl-2">
                             {exercise.sets.map((set, index) => (
                                 <div key={set.id} className="flex items-center gap-4 group/set">
-                                    <span className="text-xs text-gray-500 w-6 text-right">{index + 1}</span>
+                                    <span
+                                        className="text-xs w-6 text-right"
+                                        style={{ color: 'var(--muted)' }}
+                                    >
+                                        {index + 1}
+                                    </span>
                                     <Input
                                         value={set.note}
                                         onChange={(e) => updateSet(exercise.id, set.id, e.target.value)}
                                         placeholder="Set details (e.g. 12 x 135)"
-                                        className="w-full py-1.5 text-base border-transparent focus:border-gray-600"
+                                        className="w-full py-1.5 text-base border-transparent"
+                                        style={{ color: 'var(--foreground)' }}
                                     />
                                     <button
                                         onClick={() => deleteSet(exercise.id, set.id)}
-                                        className="w-8 h-8 flex items-center justify-center text-gray-700 hover:text-red-500 opacity-0 pointer-events-none group-focus-within/set:opacity-100 group-focus-within/set:pointer-events-auto group-hover/set:opacity-100 group-hover/set:pointer-events-auto transition-opacity"
+                                        className="w-8 h-8 flex items-center justify-center opacity-0 pointer-events-none group-focus-within/set:opacity-100 group-focus-within/set:pointer-events-auto group-hover/set:opacity-100 group-hover/set:pointer-events-auto transition-opacity"
+                                        style={{ color: 'var(--muted)' }}
                                     >
                                         <Trash2 size={14} />
                                     </button>
@@ -151,7 +168,8 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                             ))}
                             <button
                                 onClick={() => addSet(exercise.id)}
-                                className="flex items-center gap-2 text-xs text-primary hover:text-primary-hover mt-2 py-1 px-2 rounded hover:bg-primary/10 transition-colors"
+                                className="flex items-center gap-2 text-xs mt-2 py-1 px-2 rounded transition-colors"
+                                style={{ color: 'var(--accent)' }}
                             >
                                 <Plus size={14} />
                                 Add Set

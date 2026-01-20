@@ -110,17 +110,26 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             key={dateStr}
                             ref={isToday ? todayRef : null}
                             onClick={() => handleDateSelect(dateStr)}
-                            className={`flex flex-col items-center justify-start pt-3 min-w-[60px] h-[80px] rounded-xl transition-all ${isSelected
-                                ? 'text-primary-950 bg-primary-200 scale-105'
-                                : 'text-gray-400 hover:bg-gray-800'
-                                } ${isToday && !isSelected ? 'border border-gray-700' : ''}`}
+                            className="flex flex-col items-center justify-start pt-3 min-w-[60px] h-[80px] rounded-xl transition-all"
+                            style={{
+                                background: isSelected ? 'var(--accent)' : 'transparent',
+                                color: isSelected ? '#ffffff' : 'var(--muted)',
+                                transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                                border: isToday && !isSelected ? '1px solid var(--border)' : 'none',
+                            }}
                         >
                             <span className="text-xs font-medium mb-1">{format(date, 'EEE')}</span>
-                            <span className={`text-lg font-bold ${isSelected ? 'text-primary-950' : 'text-gray-200'}`}>
+                            <span
+                                className="text-lg font-bold"
+                                style={{ color: isSelected ? '#ffffff' : 'var(--foreground)' }}
+                            >
                                 {format(date, 'd')}
                             </span>
                             {hasData ? (
-                                <div className={`w-1 h-1 rounded-full mt-1 ${isSelected ? 'bg-primary-900' : 'bg-primary-200'}`} />
+                                <div
+                                    className="w-1 h-1 rounded-full mt-1"
+                                    style={{ background: isSelected ? '#ffffff' : 'var(--accent)' }}
+                                />
                             ) : null}
                         </button>
                     );
@@ -157,7 +166,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                 }
             >
                 {currentWorkouts.length === 0 ? (
-                    <div className="text-center py-6 text-gray-500">
+                    <div className="text-center py-6" style={{ color: 'var(--muted)' }}>
                         <p className="text-sm mb-3">No workouts logged</p>
                         <Button variant="secondary" size="sm" onClick={handleAddWorkout}>
                             Add Workout
@@ -169,16 +178,22 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             <button
                                 key={workout.id}
                                 onClick={() => onOpenWorkout(workout.id)}
-                                className="w-full flex items-center p-3 bg-[#1a1a1a] rounded-lg hover:bg-primary-900/20 transition-colors text-left group"
+                                className="w-full flex items-center p-3 rounded-lg transition-colors text-left group"
+                                style={{
+                                    background: 'var(--muted-bg)',
+                                }}
                             >
-                                <div className="p-2 bg-gray-800 rounded-lg mr-3 group-hover:bg-gray-700 transition-colors">
-                                    <Dumbbell size={20} className="text-primary-200" />
+                                <div
+                                    className="p-2 rounded-lg mr-3 transition-colors"
+                                    style={{ background: 'var(--card-hover)' }}
+                                >
+                                    <Dumbbell size={20} style={{ color: 'var(--accent)' }} />
                                 </div>
                                 <div>
-                                    <h4 className="font-medium text-gray-200">
+                                    <h4 className="font-medium" style={{ color: 'var(--foreground)' }}>
                                         {workout.name || 'Untitled Workout'}
                                     </h4>
-                                    <p className="text-xs text-gray-500">
+                                    <p className="text-xs" style={{ color: 'var(--muted)' }}>
                                         {workout.exercises.length} exercises
                                     </p>
                                 </div>

@@ -5,15 +5,26 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;
 }
 
-export const Input: React.FC<InputProps> = ({ label, className, ...props }) => {
+export const Input: React.FC<InputProps> = ({ label, className, style, ...props }) => {
     return (
         <div className="flex flex-col space-y-1 w-full">
-            {label && <label className="text-xs text-gray-400 font-medium">{label}</label>}
+            {label && (
+                <label
+                    className="text-xs font-medium"
+                    style={{ color: 'var(--muted)' }}
+                >
+                    {label}
+                </label>
+            )}
             <input
                 className={clsx(
-                    'bg-[#1a1a1a] border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors',
+                    'rounded-lg px-3 py-2 transition-all input-modern',
                     className
                 )}
+                style={{
+                    color: 'var(--foreground)',
+                    ...style,
+                }}
                 {...props}
             />
         </div>

@@ -11,29 +11,54 @@ export const Button: React.FC<ButtonProps> = ({
     className,
     variant = 'primary',
     size = 'md',
+    style,
     ...props
 }) => {
-    const variants = {
-        primary: 'bg-primary hover:bg-primary-hover text-primary-foreground',
-        secondary: 'bg-[#1a1a1a] border border-gray-700 hover:bg-gray-800 text-primary-200',
-        danger: 'bg-red-600 hover:bg-red-700 text-white',
-        ghost: 'bg-transparent hover:bg-primary-900/20 text-gray-400 hover:text-primary-200',
-    };
-
     const sizes = {
         sm: 'px-3 py-1.5 text-xs',
         md: 'px-4 py-2 text-sm',
         lg: 'px-6 py-3 text-base',
     };
 
+    const getVariantStyles = (): React.CSSProperties => {
+        switch (variant) {
+            case 'primary':
+                return {
+                    background: 'var(--accent)',
+                    color: '#ffffff',
+                };
+            case 'secondary':
+                return {
+                    background: 'var(--card)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--foreground)',
+                };
+            case 'danger':
+                return {
+                    background: 'var(--error)',
+                    color: '#ffffff',
+                };
+            case 'ghost':
+                return {
+                    background: 'transparent',
+                    color: 'var(--muted)',
+                };
+            default:
+                return {};
+        }
+    };
+
     return (
         <button
             className={clsx(
-                'rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#1a1a1a] focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed',
-                variants[variant],
+                'rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed',
                 sizes[size],
                 className
             )}
+            style={{
+                ...getVariantStyles(),
+                ...style,
+            }}
             {...props}
         >
             {children}

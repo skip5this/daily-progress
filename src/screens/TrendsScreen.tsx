@@ -27,16 +27,20 @@ export const TrendsScreen: React.FC = () => {
     return (
         <div className="p-4 space-y-6 pb-24">
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white">Trends</h2>
-                <div className="flex bg-[#2a2a2a] rounded-lg p-1">
+                <h2 className="text-xl font-bold" style={{ color: 'var(--foreground)' }}>Trends</h2>
+                <div
+                    className="flex rounded-lg p-1"
+                    style={{ background: 'var(--muted-bg)' }}
+                >
                     {(['30', '90', 'all'] as Timeframe[]).map((tf) => (
                         <button
                             key={tf}
                             onClick={() => setTimeframe(tf)}
-                            className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${timeframe === tf
-                                ? 'bg-primary text-primary-foreground'
-                                : 'text-gray-400 hover:text-white'
-                                }`}
+                            className="px-3 py-1 text-xs font-medium rounded-md transition-colors"
+                            style={{
+                                background: timeframe === tf ? 'var(--accent)' : 'transparent',
+                                color: timeframe === tf ? '#ffffff' : 'var(--muted)',
+                            }}
                         >
                             {tf === 'all' ? 'All' : `${tf} Days`}
                         </button>
@@ -50,37 +54,43 @@ export const TrendsScreen: React.FC = () => {
                     {chartData.filter(d => d.weight !== null).length > 0 ? (
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={formatDateTick}
-                                    stroke="#666"
-                                    tick={{ fontSize: 12 }}
+                                    stroke="var(--muted)"
+                                    tick={{ fontSize: 12, fill: 'var(--muted)' }}
                                     minTickGap={30}
                                 />
                                 <YAxis
                                     domain={['auto', 'auto']}
-                                    stroke="#666"
-                                    tick={{ fontSize: 12 }}
+                                    stroke="var(--muted)"
+                                    tick={{ fontSize: 12, fill: 'var(--muted)' }}
                                     width={30}
                                 />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }}
+                                    contentStyle={{
+                                        backgroundColor: 'var(--card)',
+                                        border: '1px solid var(--border)',
+                                        borderRadius: '8px',
+                                        color: 'var(--foreground)',
+                                    }}
                                     labelFormatter={(label) => format(parseISO(label), 'MMM d, yyyy')}
+                                    labelStyle={{ color: 'var(--foreground)' }}
                                 />
                                 <Line
                                     type="monotone"
                                     dataKey="weight"
-                                    stroke="#C9F2D0"
+                                    stroke="#6fd685"
                                     strokeWidth={2}
-                                    dot={{ r: 3, fill: '#C9F2D0' }}
+                                    dot={{ r: 3, fill: '#6fd685' }}
                                     activeDot={{ r: 6 }}
                                     connectNulls
                                 />
                             </LineChart>
                         </ResponsiveContainer>
                     ) : (
-                        <div className="h-full flex items-center justify-center text-gray-500 text-sm">
+                        <div className="h-full flex items-center justify-center text-sm" style={{ color: 'var(--muted)' }}>
                             No weight data available
                         </div>
                     )}
@@ -93,36 +103,42 @@ export const TrendsScreen: React.FC = () => {
                     {chartData.filter(d => d.steps !== null).length > 0 ? (
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
                                 <XAxis
                                     dataKey="date"
                                     tickFormatter={formatDateTick}
-                                    stroke="#666"
-                                    tick={{ fontSize: 12 }}
+                                    stroke="var(--muted)"
+                                    tick={{ fontSize: 12, fill: 'var(--muted)' }}
                                     minTickGap={30}
                                 />
                                 <YAxis
-                                    stroke="#666"
-                                    tick={{ fontSize: 12 }}
+                                    stroke="var(--muted)"
+                                    tick={{ fontSize: 12, fill: 'var(--muted)' }}
                                     width={40}
                                 />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333', borderRadius: '8px' }}
+                                    contentStyle={{
+                                        backgroundColor: 'var(--card)',
+                                        border: '1px solid var(--border)',
+                                        borderRadius: '8px',
+                                        color: 'var(--foreground)',
+                                    }}
                                     labelFormatter={(label) => format(parseISO(label), 'MMM d, yyyy')}
+                                    labelStyle={{ color: 'var(--foreground)' }}
                                 />
                                 <Line
                                     type="monotone"
                                     dataKey="steps"
-                                    stroke="#10b981"
+                                    stroke="#3b82f6"
                                     strokeWidth={2}
-                                    dot={{ r: 3, fill: '#10b981' }}
+                                    dot={{ r: 3, fill: '#3b82f6' }}
                                     activeDot={{ r: 6 }}
                                     connectNulls
                                 />
                             </LineChart>
                         </ResponsiveContainer>
                     ) : (
-                        <div className="h-full flex items-center justify-center text-gray-500 text-sm">
+                        <div className="h-full flex items-center justify-center text-sm" style={{ color: 'var(--muted)' }}>
                             No steps data available
                         </div>
                     )}

@@ -1,10 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { ThemeToggle } from '../components/ThemeToggle';
 
 type AuthMode = 'signin' | 'signup' | 'magic-link';
 
+// Initialize theme on page load (before React renders)
+function initializeTheme() {
+  const saved = localStorage.getItem("theme");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if (saved === "dark" || (!saved && prefersDark)) {
+    document.documentElement.classList.add("dark");
+  }
+}
+
 export const AuthScreen: React.FC = () => {
   const { signIn, signUp, signInWithMagicLink } = useAuth();
+
+  useEffect(() => {
+    initializeTheme();
+  }, []);
   const [mode, setMode] = useState<AuthMode>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -45,9 +59,19 @@ export const AuthScreen: React.FC = () => {
     }
   };
 
+  // Gradient orbs component for the auth screen background
+  const GradientOrbs = () => (
+    <div className="gradient-mesh">
+      <div className="gradient-orb gradient-orb-1" />
+      <div className="gradient-orb gradient-orb-2" />
+      <div className="gradient-orb gradient-orb-3" />
+    </div>
+  );
+
   if (magicLinkSent) {
     return (
       <div className="auth-screen">
+        <GradientOrbs />
         <div className="auth-container">
           <div className="auth-header">
             <h1>Check your email</h1>
@@ -74,8 +98,12 @@ export const AuthScreen: React.FC = () => {
 
   return (
     <div className="auth-screen">
+      <GradientOrbs />
       <div className="auth-container">
         <div className="auth-header">
+          <div className="flex justify-end mb-4">
+            <ThemeToggle />
+          </div>
           <h1>Daily Progress</h1>
           <p>
             {mode === 'signin' && 'Welcome back'}

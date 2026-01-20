@@ -1,14 +1,75 @@
 @import "tailwindcss";
 
+:root {
+  /* Modern neutral palette - Light mode */
+  --background: #fafafa;
+  --foreground: #171717;
+  --card: #ffffff;
+  --card-hover: #f5f5f5;
+  --border: rgba(0, 0, 0, 0.06);
+  --muted: #737373;
+  --muted-bg: #f5f5f5;
+
+  /* Primary accent - mint green */
+  --accent: #42bf63;
+  --accent-light: #e1f8e8;
+  --accent-dark: #2ea650;
+
+  /* Semantic colors */
+  --success: #22c55e;
+  --warning: #eab308;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  /* Shadow system */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+
+  /* Inner glow for inputs */
+  --inner-highlight: rgba(255, 255, 255, 0.8);
+  --focus-ring: rgba(66, 191, 99, 0.2);
+}
+
+/* Dark mode */
+.dark {
+  --background: #0a0a0a;
+  --foreground: #fafafa;
+  --card: #171717;
+  --card-hover: #262626;
+  --border: rgba(255, 255, 255, 0.08);
+  --muted: #a3a3a3;
+  --muted-bg: #262626;
+
+  /* Accent adjustments for dark */
+  --accent: #6fd685;
+  --accent-light: #1e3a28;
+  --accent-dark: #9ee6ab;
+
+  /* Brighter semantic colors for dark mode */
+  --success: #4ade80;
+  --warning: #facc15;
+  --error: #f87171;
+  --info: #60a5fa;
+
+  /* Darker shadows for dark mode */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+
+  --inner-highlight: rgba(255, 255, 255, 0.05);
+  --focus-ring: rgba(111, 214, 133, 0.3);
+}
+
 @theme {
-  /* 
-    Generated scale based on Mint Green #C9F2D0 
-    Matches the "blue" scale logic: light -> dark
-  */
+  /* Mint green primary scale */
   --color-primary-50: #f2fcf5;
   --color-primary-100: #e1f8e8;
   --color-primary-200: #c9f2d0;
-  /* User's Accent */
   --color-primary-300: #9ee6ab;
   --color-primary-400: #6fd685;
   --color-primary-500: #42bf63;
@@ -19,17 +80,11 @@
   --color-primary-950: #0d2f1b;
 
   /* Default aliases */
-  --color-primary: var(--color-primary-200);
-  /* Use the mint green as the main accent */
+  --color-primary: var(--color-primary-400);
   --color-primary-foreground: #1a1a1a;
+  --color-primary-hover: var(--color-primary-500);
 
-  /* Hover state - slightly darker/richer than the mint */
-  --color-primary-hover: var(--color-primary-300);
-
-  /* 
-    Redefine Gray to be "Neutral" (True Gray) 
-    to remove the blue tint of the default slate/gray 
-  */
+  /* Neutral gray scale */
   --color-gray-50: #fafafa;
   --color-gray-100: #f5f5f5;
   --color-gray-200: #e5e5e5;
@@ -43,17 +98,7 @@
   --color-gray-950: #0a0a0a;
 }
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #1a1a1a;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+* {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -62,6 +107,11 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  line-height: 1.6;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 @layer utilities {
@@ -75,23 +125,166 @@ body {
   }
 }
 
-/* Auth Screen Styles */
+/* ============================================
+   BACKGROUND EFFECTS (Login screen only)
+   ============================================ */
+
+/* Gradient mesh / orbs */
+.gradient-mesh {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.gradient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  animation: float 25s ease-in-out infinite;
+}
+
+.gradient-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: rgba(66, 191, 99, 0.25);
+  top: -100px;
+  right: -50px;
+  animation-delay: 0s;
+}
+
+.gradient-orb-2 {
+  width: 450px;
+  height: 450px;
+  background: rgba(59, 130, 246, 0.2);
+  bottom: -100px;
+  left: -50px;
+  animation-delay: -8s;
+}
+
+.gradient-orb-3 {
+  width: 350px;
+  height: 350px;
+  background: rgba(168, 85, 247, 0.15);
+  top: 50%;
+  left: 30%;
+  animation-delay: -16s;
+}
+
+/* Subtle orbs in dark mode */
+.dark .gradient-orb {
+  opacity: 0.6;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(40px, -40px) scale(1.1);
+  }
+  66% {
+    transform: translate(-30px, 30px) scale(0.9);
+  }
+}
+
+/* ============================================
+   CARDS AND COMMON ELEMENTS
+   ============================================ */
+
+.card-elevated {
+  background: var(--card);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-elevated:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+/* Modern input style */
+.input-modern {
+  background: var(--card);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 0 var(--inner-highlight);
+  border: 1px solid var(--border);
+  transition: all 0.15s ease;
+}
+
+.input-modern:hover {
+  box-shadow: var(--shadow-md), inset 0 1px 0 0 var(--inner-highlight);
+}
+
+.input-modern:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring), var(--shadow-md), inset 0 1px 0 0 var(--inner-highlight);
+}
+
+/* ============================================
+   THEME TOGGLE
+   ============================================ */
+
+.theme-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--muted-bg);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border: 1px solid var(--border);
+}
+
+.theme-toggle:hover {
+  background: var(--card-hover);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: var(--card);
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dark .theme-toggle-thumb {
+  transform: translateX(20px);
+}
+
+/* ============================================
+   AUTH SCREEN STYLES
+   ============================================ */
+
 .auth-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background-color: #1a1a1a;
+  background: var(--background);
+  position: relative;
+  overflow: hidden;
 }
 
 .auth-container {
   width: 100%;
   max-width: 400px;
   padding: 2rem;
-  background-color: #262626;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border);
+  position: relative;
+  z-index: 10;
 }
 
 .auth-header {
@@ -102,12 +295,12 @@ body {
 .auth-header h1 {
   font-size: 1.75rem;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--foreground);
   margin: 0 0 0.5rem 0;
 }
 
 .auth-header p {
-  color: #a3a3a3;
+  color: var(--muted);
   margin: 0;
 }
 
@@ -126,26 +319,27 @@ body {
 .form-group label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #d4d4d4;
+  color: var(--foreground);
 }
 
 .form-group input {
   padding: 0.75rem 1rem;
-  border: 1px solid #404040;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background-color: #1a1a1a;
-  color: #ffffff;
+  background: var(--background);
+  color: var(--foreground);
   font-size: 1rem;
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--color-primary-400);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .form-group input::placeholder {
-  color: #737373;
+  color: var(--muted);
 }
 
 .auth-error {
@@ -153,7 +347,7 @@ body {
   background-color: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: 8px;
-  color: #fca5a5;
+  color: var(--error);
   font-size: 0.875rem;
 }
 
@@ -168,12 +362,12 @@ body {
 }
 
 .auth-button.primary {
-  background-color: var(--color-primary-500);
+  background: var(--accent);
   color: #ffffff;
 }
 
 .auth-button.primary:hover:not(:disabled) {
-  background-color: var(--color-primary-600);
+  background: var(--accent-dark);
 }
 
 .auth-button.primary:disabled {
@@ -182,13 +376,13 @@ body {
 }
 
 .auth-button.secondary {
-  background-color: transparent;
-  border: 1px solid #404040;
-  color: #d4d4d4;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
 }
 
 .auth-button.secondary:hover {
-  background-color: #333333;
+  background: var(--card-hover);
 }
 
 .auth-divider {
@@ -202,12 +396,12 @@ body {
   content: '';
   flex: 1;
   height: 1px;
-  background-color: #404040;
+  background: var(--border);
 }
 
 .auth-divider span {
   padding: 0 1rem;
-  color: #737373;
+  color: var(--muted);
   font-size: 0.875rem;
 }
 
@@ -219,7 +413,7 @@ body {
 }
 
 .auth-switch {
-  color: #a3a3a3;
+  color: var(--muted);
   font-size: 0.875rem;
   margin: 0;
 }
@@ -227,7 +421,7 @@ body {
 .auth-switch button {
   background: none;
   border: none;
-  color: var(--color-primary-400);
+  color: var(--accent);
   cursor: pointer;
   font-size: 0.875rem;
   padding: 0;
@@ -237,20 +431,39 @@ body {
   text-decoration: underline;
 }
 
-/* Loading spinner */
+/* Check email message */
+.check-email-message {
+  text-align: center;
+  padding: 2rem;
+}
+
+.check-email-message h2 {
+  color: var(--foreground);
+  margin: 0 0 1rem 0;
+}
+
+.check-email-message p {
+  color: var(--muted);
+  margin: 0 0 1.5rem 0;
+}
+
+/* ============================================
+   LOADING SCREEN
+   ============================================ */
+
 .loading-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #1a1a1a;
+  background: var(--background);
 }
 
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid #404040;
-  border-top-color: var(--color-primary-400);
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -259,4 +472,23 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out forwards;
 }

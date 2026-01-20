@@ -10,10 +10,19 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ children, className, title, action }) => {
     return (
-        <div className={clsx('bg-[#2a2a2a] rounded-xl p-4 shadow-sm mb-4', className)}>
+        <div
+            className={clsx('rounded-xl p-4 mb-4 card-elevated', className)}
+        >
             {(title || action) && (
                 <div className="flex justify-between items-center mb-3">
-                    {title && <h3 className="text-sm font-semibold text-gray-200 uppercase tracking-wider">{title}</h3>}
+                    {title && (
+                        <h3
+                            className="text-sm font-semibold uppercase tracking-wider"
+                            style={{ color: 'var(--foreground)' }}
+                        >
+                            {title}
+                        </h3>
+                    )}
                     {action && <div>{action}</div>}
                 </div>
             )}

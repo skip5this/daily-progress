@@ -1,6 +1,5 @@
 import React from 'react';
 import { Calendar, TrendingUp } from 'lucide-react';
-import clsx from 'clsx';
 
 interface BottomNavProps {
     currentScreen: 'today' | 'trends';
@@ -9,24 +8,26 @@ interface BottomNavProps {
 
 export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate }) => {
     return (
-        <nav className="fixed bottom-0 left-0 right-0 bg-[#1a1a1a] border-t border-gray-800 pb-8">
+        <nav
+            className="fixed bottom-0 left-0 right-0 pb-8"
+            style={{
+                background: 'var(--background)',
+                borderTop: '1px solid var(--border)'
+            }}
+        >
             <div className="flex justify-around items-center h-16">
                 <button
                     onClick={() => onNavigate('today')}
-                    className={clsx(
-                        'flex flex-col items-center justify-center w-full h-full space-y-1',
-                        currentScreen === 'today' ? 'text-primary-200' : 'text-gray-400'
-                    )}
+                    className="flex flex-col items-center justify-center w-full h-full space-y-1"
+                    style={{ color: currentScreen === 'today' ? 'var(--accent)' : 'var(--muted)' }}
                 >
                     <Calendar size={24} />
                     <span className="text-xs font-medium">Today</span>
                 </button>
                 <button
                     onClick={() => onNavigate('trends')}
-                    className={clsx(
-                        'flex flex-col items-center justify-center w-full h-full space-y-1',
-                        currentScreen === 'trends' ? 'text-primary-200' : 'text-gray-400'
-                    )}
+                    className="flex flex-col items-center justify-center w-full h-full space-y-1"
+                    style={{ color: currentScreen === 'trends' ? 'var(--accent)' : 'var(--muted)' }}
                 >
                     <TrendingUp size={24} />
                     <span className="text-xs font-medium">Trends</span>
