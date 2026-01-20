@@ -226,7 +226,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     return (
         <div className="px-4 pt-3 pb-4 space-y-4">
             {/* Month Label */}
-            <div className="text-sm font-medium text-gray-400 -mb-2 ml-4">
+            <div className="text-sm font-medium text-gray-400 -mb-2 ml-[14px]">
                 {visibleMonth}
             </div>
 
