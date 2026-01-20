@@ -124,7 +124,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
+    const [scrollLeftStart, setScrollLeftStart] = useState(0);
     const [hasDragged, setHasDragged] = useState(false);
 
     // Scroll to current week on mount
@@ -136,20 +136,42 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
         }
     }, [currentWeekIndex, weeks.length]);
 
+    const snapToNearestWeek = () => {
+        if (!scrollContainerRef.current) return;
+        const container = scrollContainerRef.current;
+        const weekWidth = container.clientWidth;
+        const targetScroll = Math.round(container.scrollLeft / weekWidth) * weekWidth;
+        container.style.scrollSnapType = 'none';
+        container.scrollTo({ left: targetScroll, behavior: 'smooth' });
+        setTimeout(() => {
+            if (scrollContainerRef.current) {
+                scrollContainerRef.current.style.scrollSnapType = 'x mandatory';
+            }
+        }, 300);
+    };
+
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!scrollContainerRef.current) return;
+        // Disable snap while dragging
+        scrollContainerRef.current.style.scrollSnapType = 'none';
         setIsDragging(true);
         setHasDragged(false);
         setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
-        setScrollLeft(scrollContainerRef.current.scrollLeft);
+        setScrollLeftStart(scrollContainerRef.current.scrollLeft);
     };
 
     const handleMouseLeave = () => {
-        setIsDragging(false);
+        if (isDragging) {
+            setIsDragging(false);
+            snapToNearestWeek();
+        }
     };
 
     const handleMouseUp = () => {
-        setIsDragging(false);
+        if (isDragging) {
+            setIsDragging(false);
+            snapToNearestWeek();
+        }
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
@@ -158,7 +180,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
         setHasDragged(true);
         const x = e.pageX - scrollContainerRef.current.offsetLeft;
         const walk = (x - startX) * 2;
-        scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+        scrollContainerRef.current.scrollLeft = scrollLeftStart - walk;
     };
 
     const handleDateSelect = (date: string) => {
@@ -172,8 +194,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
             {/* Week Timeline */}
             <div
                 ref={scrollContainerRef}
-                className={`flex overflow-x-auto no-scrollbar snap-x snap-mandatory ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-                style={{ scrollBehavior: isDragging ? 'auto' : 'smooth' }}
+                className={`flex overflow-x-auto no-scrollbar snap-x snap-mandatory ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
                 onMouseDown={handleMouseDown}
                 onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
