@@ -218,10 +218,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             const isSelected = dateStr === selectedDate;
                             const isToday = isSameDay(date, new Date());
 
-                            const metricsEntry = state.dailyMetrics[dateStr];
-                            const hasCustomMetricData = metricsEntry?.customMetrics && Object.values(metricsEntry.customMetrics).some(v => v !== null);
-                            const hasData = (metricsEntry && (metricsEntry.weight || metricsEntry.steps || hasCustomMetricData)) ||
-                                state.workouts.some(w => w.date === dateStr);
+                            const hasWorkout = state.workouts.some(w => w.date === dateStr);
 
                             return (
                                 <button
@@ -236,7 +233,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                                     <span className={`text-lg font-bold ${isSelected ? 'text-primary-950' : 'text-gray-200'}`}>
                                         {format(date, 'd')}
                                     </span>
-                                    {hasData ? (
+                                    {hasWorkout ? (
                                         <div className={`w-1 h-1 rounded-full mt-0.5 ${isSelected ? 'bg-primary-900' : 'bg-primary-200'}`} />
                                     ) : null}
                                 </button>
