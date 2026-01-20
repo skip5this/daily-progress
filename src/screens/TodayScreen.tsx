@@ -225,7 +225,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             const hasWorkout = state.workouts.some(w => w.date === dateStr);
 
                             return (
-                                <div key={dateStr} className="flex flex-col items-center flex-1 mx-1">
+                                <div key={dateStr} className="flex flex-col items-center flex-1 mx-0.5">
                                     <button
                                         onClick={() => handleDateSelect(dateStr)}
                                         className={`flex flex-col items-center justify-center w-full py-2 rounded-xl transition-all ${isSelected
@@ -238,9 +238,9 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                                             {format(date, 'd')}
                                         </span>
                                     </button>
-                                    <div className="h-3 flex items-center justify-center">
+                                    <div className="h-5 flex items-end justify-center pb-1">
                                         {hasWorkout && (
-                                            <div className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-primary-200' : 'bg-primary-200'}`} />
+                                            <div className="w-1.5 h-1.5 rounded-full bg-primary-200" />
                                         )}
                                     </div>
                                 </div>
