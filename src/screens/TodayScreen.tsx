@@ -122,7 +122,6 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     }, [weeks]);
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const [currentVisibleWeek, setCurrentVisibleWeek] = useState(currentWeekIndex);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
@@ -134,28 +133,8 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
             const container = scrollContainerRef.current;
             const weekWidth = container.clientWidth;
             container.scrollLeft = currentWeekIndex * weekWidth;
-            setCurrentVisibleWeek(currentWeekIndex);
         }
     }, [currentWeekIndex, weeks.length]);
-
-    // Handle snap scrolling
-    const handleScroll = () => {
-        if (!scrollContainerRef.current) return;
-        const container = scrollContainerRef.current;
-        const weekWidth = container.clientWidth;
-        const newWeekIndex = Math.round(container.scrollLeft / weekWidth);
-        if (newWeekIndex !== currentVisibleWeek) {
-            setCurrentVisibleWeek(newWeekIndex);
-        }
-    };
-
-    const handleScrollEnd = () => {
-        if (!scrollContainerRef.current) return;
-        const container = scrollContainerRef.current;
-        const weekWidth = container.clientWidth;
-        const targetScroll = Math.round(container.scrollLeft / weekWidth) * weekWidth;
-        container.scrollTo({ left: targetScroll, behavior: 'smooth' });
-    };
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!scrollContainerRef.current) return;
@@ -166,17 +145,11 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     };
 
     const handleMouseLeave = () => {
-        if (isDragging) {
-            setIsDragging(false);
-            handleScrollEnd();
-        }
+        setIsDragging(false);
     };
 
     const handleMouseUp = () => {
-        if (isDragging) {
-            setIsDragging(false);
-            handleScrollEnd();
-        }
+        setIsDragging(false);
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
@@ -184,7 +157,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
         e.preventDefault();
         setHasDragged(true);
         const x = e.pageX - scrollContainerRef.current.offsetLeft;
-        const walk = (x - startX) * 1.5;
+        const walk = (x - startX) * 2;
         scrollContainerRef.current.scrollLeft = scrollLeft - walk;
     };
 
@@ -199,9 +172,8 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
             {/* Week Timeline */}
             <div
                 ref={scrollContainerRef}
-                className={`flex overflow-x-auto no-scrollbar ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-                onScroll={handleScroll}
-                onTouchEnd={handleScrollEnd}
+                className={`flex overflow-x-auto no-scrollbar snap-x snap-mandatory ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                style={{ scrollBehavior: isDragging ? 'auto' : 'smooth' }}
                 onMouseDown={handleMouseDown}
                 onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
@@ -210,8 +182,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                 {weeks.map((week, weekIndex) => (
                     <div
                         key={weekIndex}
-                        className="flex-shrink-0 w-full flex justify-between px-1 py-4 snap-center"
-                        style={{ scrollSnapAlign: 'center' }}
+                        className="flex-shrink-0 w-full flex justify-between px-1 py-4 snap-start"
                     >
                         {week.map((date) => {
                             const dateStr = format(date, 'yyyy-MM-dd');
