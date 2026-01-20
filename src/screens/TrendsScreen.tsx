@@ -39,7 +39,7 @@ export const TrendsScreen: React.FC = () => {
                             className="px-3 py-1 text-xs font-medium rounded-md transition-colors"
                             style={{
                                 background: timeframe === tf ? 'var(--accent)' : 'transparent',
-                                color: timeframe === tf ? '#1a1a1a' : 'var(--muted)',
+                                color: timeframe === tf ? 'var(--accent-text)' : 'var(--muted)',
                             }}
                         >
                             {tf === 'all' ? 'All' : `${tf} Days`}

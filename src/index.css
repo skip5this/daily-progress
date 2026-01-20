@@ -10,10 +10,11 @@
   --muted: #737373;
   --muted-bg: #f5f5f5;
 
-  /* Primary accent - mint green */
-  --accent: #C9F2D0;
+  /* Primary accent - darker green for light mode */
+  --accent: #2ea650;
   --accent-light: #e1f8e8;
-  --accent-dark: #9ee6ab;
+  --accent-dark: #258443;
+  --accent-text: #ffffff;
 
   /* Semantic colors */
   --success: #22c55e;
@@ -43,10 +44,11 @@
   --muted: #a3a3a3;
   --muted-bg: #262626;
 
-  /* Accent adjustments for dark */
+  /* Accent adjustments for dark - mint green */
   --accent: #C9F2D0;
   --accent-light: #1e3a28;
   --accent-dark: #9ee6ab;
+  --accent-text: #1a1a1a;
 
   /* Brighter semantic colors for dark mode */
   --success: #4ade80;
@@ -361,7 +363,7 @@ body {
 
 .auth-button.primary {
   background: var(--accent);
-  color: #1a1a1a;
+  color: var(--accent-text);
 }
 
 .auth-button.primary:hover:not(:disabled) {

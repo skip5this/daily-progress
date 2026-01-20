@@ -25,7 +25,7 @@ export const Button: React.FC<ButtonProps> = ({
             case 'primary':
                 return {
                     background: 'var(--accent)',
-                    color: '#1a1a1a',
+                    color: 'var(--accent-text)',
                 };
             case 'secondary':
                 return {
