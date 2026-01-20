@@ -14,6 +14,8 @@ export default defineConfig({
         short_name: 'DailyProgress',
         description: 'Track your daily health metrics',
         theme_color: '#1a1a1a',
+        background_color: '#1a1a1a',
+        display: 'standalone',
         icons: [
           {
             src: 'pwa-192x192.png',

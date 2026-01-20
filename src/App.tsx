@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { AppProvider } from './context/AppContext';
+import { AppProvider, useApp } from './context/AppContext';
 import { Layout } from './components/Layout';
 import { TodayScreen } from './screens/TodayScreen';
 import { TrendsScreen } from './screens/TrendsScreen';
 import { WorkoutDetailScreen } from './screens/WorkoutDetailScreen';
 import { AuthScreen } from './screens/AuthScreen';
 
-function MainApp() {
+function MainAppContent() {
+  const { loading } = useApp();
   const [currentScreen, setCurrentScreen] = useState<'today' | 'trends'>('today');
   const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
 
@@ -24,16 +25,28 @@ function MainApp() {
     setSelectedWorkoutId(null);
   };
 
+  if (loading) {
+    return (
+      <div className="loading-screen">
+        <div className="loading-spinner" />
+      </div>
+    );
+  }
+
+  return selectedWorkoutId ? (
+    <WorkoutDetailScreen workoutId={selectedWorkoutId} onClose={handleCloseWorkout} />
+  ) : (
+    <Layout currentScreen={currentScreen} onNavigate={handleNavigate}>
+      {currentScreen === 'today' && <TodayScreen onOpenWorkout={handleOpenWorkout} />}
+      {currentScreen === 'trends' && <TrendsScreen />}
+    </Layout>
+  );
+}
+
+function MainApp() {
   return (
     <AppProvider>
-      {selectedWorkoutId ? (
-        <WorkoutDetailScreen workoutId={selectedWorkoutId} onClose={handleCloseWorkout} />
-      ) : (
-        <Layout currentScreen={currentScreen} onNavigate={handleNavigate}>
-          {currentScreen === 'today' && <TodayScreen onOpenWorkout={handleOpenWorkout} />}
-          {currentScreen === 'trends' && <TrendsScreen />}
-        </Layout>
-      )}
+      <MainAppContent />
     </AppProvider>
   );
 }
