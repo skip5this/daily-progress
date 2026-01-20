@@ -59,6 +59,7 @@ export const AuthScreen: React.FC = () => {
           <button
             type="button"
             className="auth-button secondary"
+            style={{ width: '100%' }}
             onClick={() => {
               setMagicLinkSent(false);
               setEmail('');

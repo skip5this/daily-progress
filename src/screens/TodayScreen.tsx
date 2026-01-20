@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from 'react';
-import { format, subDays, isSameDay, parseISO } from 'date-fns';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { format, isSameDay, parseISO, startOfWeek, endOfWeek, addWeeks, eachDayOfInterval, min, subWeeks } from 'date-fns';
 import { Plus, Dumbbell, Pencil, Check, Trash2 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { Card } from '../components/ui/Card';
@@ -79,100 +79,171 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
         onOpenWorkout(newWorkout.id);
     };
 
-    // Generate dates for the timeline (past 14 days + next 7 days)
-    const timelineDates = Array.from({ length: 22 }, (_, i) => {
-        const d = subDays(new Date(), 14 - i);
-        return format(d, 'yyyy-MM-dd');
-    });
+    // Generate weeks based on data range
+    const weeks = useMemo(() => {
+        const today = new Date();
+        const currentWeekStart = startOfWeek(today, { weekStartsOn: 1 }); // Monday
+
+        // Find oldest date with data
+        const allDates = [
+            ...Object.keys(state.dailyMetrics),
+            ...state.workouts.map(w => w.date)
+        ].filter(Boolean).map(d => parseISO(d));
+
+        // Default to 8 weeks back if no data, otherwise 1 week before oldest data
+        const oldestDate = allDates.length > 0
+            ? min(allDates)
+            : subWeeks(today, 8);
+
+        const oldestWeekStart = subWeeks(startOfWeek(oldestDate, { weekStartsOn: 1 }), 1);
+
+        // Calculate number of weeks from oldest to current + 2 future weeks
+        const futureWeekEnd = endOfWeek(addWeeks(currentWeekStart, 2), { weekStartsOn: 1 });
+
+        const allWeeks: Date[][] = [];
+        let weekStart = oldestWeekStart;
+
+        while (weekStart <= futureWeekEnd) {
+            const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
+            const daysInWeek = eachDayOfInterval({ start: weekStart, end: weekEnd });
+            allWeeks.push(daysInWeek);
+            weekStart = addWeeks(weekStart, 1);
+        }
+
+        return allWeeks;
+    }, [state.dailyMetrics, state.workouts]);
+
+    // Find current week index
+    const currentWeekIndex = useMemo(() => {
+        const today = new Date();
+        return weeks.findIndex(week =>
+            week.some(day => isSameDay(day, today))
+        );
+    }, [weeks]);
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
-    const todayRef = useRef<HTMLButtonElement>(null);
+    const [currentVisibleWeek, setCurrentVisibleWeek] = useState(currentWeekIndex);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
+    const [hasDragged, setHasDragged] = useState(false);
 
+    // Scroll to current week on mount
     useEffect(() => {
-        if (todayRef.current && scrollContainerRef.current) {
+        if (scrollContainerRef.current && currentWeekIndex >= 0) {
             const container = scrollContainerRef.current;
-            const element = todayRef.current;
-
-            // Calculate scroll position to align right edge + 16px offset
-            const scrollLeft = element.offsetLeft + element.offsetWidth - container.clientWidth + 16;
-
-            container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            const weekWidth = container.clientWidth;
+            container.scrollLeft = currentWeekIndex * weekWidth;
+            setCurrentVisibleWeek(currentWeekIndex);
         }
-    }, []);
+    }, [currentWeekIndex, weeks.length]);
 
-    const handleDateSelect = (date: string) => {
-        if (!isDragging) {
-            setSelectedDate(date);
+    // Handle snap scrolling
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const container = scrollContainerRef.current;
+        const weekWidth = container.clientWidth;
+        const newWeekIndex = Math.round(container.scrollLeft / weekWidth);
+        if (newWeekIndex !== currentVisibleWeek) {
+            setCurrentVisibleWeek(newWeekIndex);
         }
+    };
+
+    const handleScrollEnd = () => {
+        if (!scrollContainerRef.current) return;
+        const container = scrollContainerRef.current;
+        const weekWidth = container.clientWidth;
+        const targetScroll = Math.round(container.scrollLeft / weekWidth) * weekWidth;
+        container.scrollTo({ left: targetScroll, behavior: 'smooth' });
     };
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (!scrollContainerRef.current) return;
         setIsDragging(true);
+        setHasDragged(false);
         setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
         setScrollLeft(scrollContainerRef.current.scrollLeft);
     };
 
     const handleMouseLeave = () => {
-        setIsDragging(false);
+        if (isDragging) {
+            setIsDragging(false);
+            handleScrollEnd();
+        }
     };
 
     const handleMouseUp = () => {
-        setIsDragging(false);
+        if (isDragging) {
+            setIsDragging(false);
+            handleScrollEnd();
+        }
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!isDragging || !scrollContainerRef.current) return;
         e.preventDefault();
+        setHasDragged(true);
         const x = e.pageX - scrollContainerRef.current.offsetLeft;
-        const walk = (x - startX) * 2; // Scroll-fast
+        const walk = (x - startX) * 1.5;
         scrollContainerRef.current.scrollLeft = scrollLeft - walk;
+    };
+
+    const handleDateSelect = (date: string) => {
+        if (!hasDragged) {
+            setSelectedDate(date);
+        }
     };
 
     return (
         <div className="px-4 pt-6 pb-4 space-y-4">
-            {/* Date Timeline */}
+            {/* Week Timeline */}
             <div
                 ref={scrollContainerRef}
-                className={`flex overflow-x-auto py-4 -mx-4 px-4 space-x-2 no-scrollbar ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                className={`flex overflow-x-auto no-scrollbar ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
+                onScroll={handleScroll}
+                onTouchEnd={handleScrollEnd}
                 onMouseDown={handleMouseDown}
                 onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
                 onMouseMove={handleMouseMove}
             >
-                {timelineDates.map((dateStr) => {
-                    const date = parseISO(dateStr);
-                    const isSelected = dateStr === selectedDate;
-                    const isToday = isSameDay(date, new Date());
+                {weeks.map((week, weekIndex) => (
+                    <div
+                        key={weekIndex}
+                        className="flex-shrink-0 w-full flex justify-between px-1 py-4 snap-center"
+                        style={{ scrollSnapAlign: 'center' }}
+                    >
+                        {week.map((date) => {
+                            const dateStr = format(date, 'yyyy-MM-dd');
+                            const isSelected = dateStr === selectedDate;
+                            const isToday = isSameDay(date, new Date());
 
-                    const metricsEntry = state.dailyMetrics[dateStr];
-                    const hasCustomMetricData = metricsEntry?.customMetrics && Object.values(metricsEntry.customMetrics).some(v => v !== null);
-                    const hasData = (metricsEntry && (metricsEntry.weight || metricsEntry.steps || hasCustomMetricData)) ||
-                        state.workouts.some(w => w.date === dateStr);
+                            const metricsEntry = state.dailyMetrics[dateStr];
+                            const hasCustomMetricData = metricsEntry?.customMetrics && Object.values(metricsEntry.customMetrics).some(v => v !== null);
+                            const hasData = (metricsEntry && (metricsEntry.weight || metricsEntry.steps || hasCustomMetricData)) ||
+                                state.workouts.some(w => w.date === dateStr);
 
-                    return (
-                        <button
-                            key={dateStr}
-                            ref={isToday ? todayRef : null}
-                            onClick={() => handleDateSelect(dateStr)}
-                            className={`flex flex-col items-center justify-start pt-3 min-w-[60px] h-[80px] rounded-xl transition-all ${isSelected
-                                ? 'text-primary-950 bg-primary-200 scale-105'
-                                : 'text-gray-400 hover:bg-gray-800'
-                                } ${isToday && !isSelected ? 'border border-gray-700' : ''}`}
-                        >
-                            <span className="text-xs font-medium mb-1">{format(date, 'EEE')}</span>
-                            <span className={`text-lg font-bold ${isSelected ? 'text-primary-950' : 'text-gray-200'}`}>
-                                {format(date, 'd')}
-                            </span>
-                            {hasData ? (
-                                <div className={`w-1 h-1 rounded-full mt-1 ${isSelected ? 'bg-primary-900' : 'bg-primary-200'}`} />
-                            ) : null}
-                        </button>
-                    );
-                })}
+                            return (
+                                <button
+                                    key={dateStr}
+                                    onClick={() => handleDateSelect(dateStr)}
+                                    className={`flex flex-col items-center justify-start pt-2 flex-1 mx-0.5 h-[72px] rounded-xl transition-all ${isSelected
+                                        ? 'text-primary-950 bg-primary-200'
+                                        : 'text-gray-400 hover:bg-gray-800'
+                                        } ${isToday && !isSelected ? 'border border-gray-700' : ''}`}
+                                >
+                                    <span className="text-xs font-medium mb-0.5">{format(date, 'EEE')}</span>
+                                    <span className={`text-lg font-bold ${isSelected ? 'text-primary-950' : 'text-gray-200'}`}>
+                                        {format(date, 'd')}
+                                    </span>
+                                    {hasData ? (
+                                        <div className={`w-1 h-1 rounded-full mt-0.5 ${isSelected ? 'bg-primary-900' : 'bg-primary-200'}`} />
+                                    ) : null}
+                                </button>
+                            );
+                        })}
+                    </div>
+                ))}
             </div>
 
             {/* Daily Metrics */}

@@ -19,7 +19,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ currentScreen, onNavigate 
                     )}
                 >
                     <Calendar size={24} />
-                    <span className="text-xs font-medium">Today</span>
+                    <span className="text-xs font-medium">Tracking</span>
                 </button>
                 <button
                     onClick={() => onNavigate('trends')}
