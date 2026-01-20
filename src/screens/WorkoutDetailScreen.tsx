@@ -115,8 +115,8 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                     value={workout.name || ''}
                     onChange={(e) => handleNameChange(e.target.value)}
                     placeholder="Workout Name (Optional)"
-                    className="text-lg font-bold bg-transparent border-none px-0 focus:ring-0"
-                    style={{ color: 'var(--foreground)' }}
+                    className="text-lg font-bold bg-transparent border-none focus:ring-0"
+                    style={{ color: 'var(--foreground)', paddingLeft: '1rem' }}
                 />
             </div>
 
@@ -124,28 +124,28 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
             <div className="space-y-6">
                 {workout.exercises.map((exercise) => (
                     <Card key={exercise.id} className="relative group">
-                        <div className="flex items-center justify-between mb-4 gap-4 group/header">
+                        <div className="flex items-center mb-4 gap-4 group/header">
                             <Input
                                 value={exercise.name}
                                 onChange={(e) => updateExercise(exercise.id, { name: e.target.value })}
                                 placeholder="Exercise Name"
-                                className="font-semibold bg-transparent border-none px-0 focus:ring-0 w-full text-base"
-                                style={{ color: 'var(--foreground)' }}
+                                className="font-semibold bg-transparent border-none focus:ring-0 w-full text-base"
+                                style={{ color: 'var(--foreground)', paddingLeft: '1rem' }}
                             />
                             <button
                                 onClick={() => deleteExercise(exercise.id)}
-                                className="w-8 h-8 flex items-center justify-center transition-colors"
+                                className="w-8 h-8 flex items-center justify-center transition-colors flex-shrink-0"
                                 style={{ color: 'var(--muted)' }}
                             >
                                 <Trash2 size={16} />
                             </button>
                         </div>
 
-                        <div className="space-y-2 pl-2">
+                        <div className="space-y-2">
                             {exercise.sets.map((set, index) => (
                                 <div key={set.id} className="flex items-center gap-4 group/set">
                                     <span
-                                        className="text-xs w-6 text-right"
+                                        className="text-xs w-4 text-center"
                                         style={{ color: 'var(--muted)' }}
                                     >
                                         {index + 1}
@@ -168,10 +168,12 @@ export const WorkoutDetailScreen: React.FC<WorkoutDetailScreenProps> = ({ workou
                             ))}
                             <button
                                 onClick={() => addSet(exercise.id)}
-                                className="flex items-center gap-2 text-xs mt-2 py-1 px-2 rounded transition-colors"
+                                className="flex items-center gap-4 text-xs mt-2 py-1.5 pl-2 pr-2.5 -ml-2 rounded-full transition-all hover:bg-[var(--muted-bg)] active:bg-[var(--border)] active:scale-95"
                                 style={{ color: 'var(--accent)' }}
                             >
-                                <Plus size={14} />
+                                <span className="w-4 flex justify-center">
+                                    <Plus size={14} />
+                                </span>
                                 Add Set
                             </button>
                         </div>
