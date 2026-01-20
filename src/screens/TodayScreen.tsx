@@ -163,24 +163,36 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     const handleMouseLeave = () => {
         if (isDragging) {
             setIsDragging(false);
-            snapToNearestWeek();
+            if (hasDragged) {
+                snapToNearestWeek();
+            } else if (scrollContainerRef.current) {
+                scrollContainerRef.current.style.scrollSnapType = 'x mandatory';
+            }
         }
     };
 
     const handleMouseUp = () => {
         if (isDragging) {
             setIsDragging(false);
-            snapToNearestWeek();
+            if (hasDragged) {
+                snapToNearestWeek();
+            } else if (scrollContainerRef.current) {
+                scrollContainerRef.current.style.scrollSnapType = 'x mandatory';
+            }
         }
     };
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (!isDragging || !scrollContainerRef.current) return;
-        e.preventDefault();
-        setHasDragged(true);
         const x = e.pageX - scrollContainerRef.current.offsetLeft;
-        const walk = (x - startX) * 2;
-        scrollContainerRef.current.scrollLeft = scrollLeftStart - walk;
+        const diff = Math.abs(x - startX);
+        // Only count as drag if moved more than 5px
+        if (diff > 5) {
+            e.preventDefault();
+            setHasDragged(true);
+            const walk = (x - startX) * 2;
+            scrollContainerRef.current.scrollLeft = scrollLeftStart - walk;
+        }
     };
 
     const handleDateSelect = (date: string) => {
