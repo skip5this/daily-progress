@@ -113,7 +113,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             className="flex flex-col items-center justify-start pt-3 min-w-[60px] h-[80px] rounded-xl transition-all"
                             style={{
                                 background: isSelected ? 'var(--accent)' : 'transparent',
-                                color: isSelected ? '#ffffff' : 'var(--muted)',
+                                color: isSelected ? '#1a1a1a' : 'var(--muted)',
                                 transform: isSelected ? 'scale(1.05)' : 'scale(1)',
                                 border: isToday && !isSelected ? '1px solid var(--border)' : 'none',
                             }}
@@ -121,14 +121,14 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                             <span className="text-xs font-medium mb-1">{format(date, 'EEE')}</span>
                             <span
                                 className="text-lg font-bold"
-                                style={{ color: isSelected ? '#ffffff' : 'var(--foreground)' }}
+                                style={{ color: isSelected ? '#1a1a1a' : 'var(--foreground)' }}
                             >
                                 {format(date, 'd')}
                             </span>
                             {hasData ? (
                                 <div
                                     className="w-1 h-1 rounded-full mt-1"
-                                    style={{ background: isSelected ? '#ffffff' : 'var(--accent)' }}
+                                    style={{ background: isSelected ? '#1a1a1a' : 'var(--accent)' }}
                                 />
                             ) : null}
                         </button>

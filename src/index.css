@@ -11,9 +11,9 @@
   --muted-bg: #f5f5f5;
 
   /* Primary accent - mint green */
-  --accent: #42bf63;
+  --accent: #C9F2D0;
   --accent-light: #e1f8e8;
-  --accent-dark: #2ea650;
+  --accent-dark: #9ee6ab;
 
   /* Semantic colors */
   --success: #22c55e;
@@ -44,7 +44,7 @@
   --muted-bg: #262626;
 
   /* Accent adjustments for dark */
-  --accent: #6fd685;
+  --accent: #C9F2D0;
   --accent-light: #1e3a28;
   --accent-dark: #9ee6ab;
 
@@ -207,19 +207,17 @@ body {
 /* Modern input style */
 .input-modern {
   background: var(--card);
-  box-shadow: var(--shadow-sm), inset 0 1px 0 0 var(--inner-highlight);
   border: 1px solid var(--border);
   transition: all 0.15s ease;
 }
 
 .input-modern:hover {
-  box-shadow: var(--shadow-md), inset 0 1px 0 0 var(--inner-highlight);
+  border-color: var(--muted);
 }
 
 .input-modern:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--focus-ring), var(--shadow-md), inset 0 1px 0 0 var(--inner-highlight);
 }
 
 /* ============================================
@@ -363,7 +361,7 @@ body {
 
 .auth-button.primary {
   background: var(--accent);
-  color: #ffffff;
+  color: #1a1a1a;
 }
 
 .auth-button.primary:hover:not(:disabled) {
