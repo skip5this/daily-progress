@@ -126,6 +126,16 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
     const [startX, setStartX] = useState(0);
     const [scrollLeftStart, setScrollLeftStart] = useState(0);
     const [hasDragged, setHasDragged] = useState(false);
+    const [visibleWeekIndex, setVisibleWeekIndex] = useState(currentWeekIndex);
+
+    // Get month name from the Monday of the visible week
+    const visibleMonth = useMemo(() => {
+        if (weeks.length === 0 || visibleWeekIndex < 0 || visibleWeekIndex >= weeks.length) {
+            return format(new Date(), 'MMMM');
+        }
+        const monday = weeks[visibleWeekIndex][0];
+        return format(monday, 'MMMM');
+    }, [weeks, visibleWeekIndex]);
 
     // Scroll to current week on mount
     useEffect(() => {
@@ -133,8 +143,20 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
             const container = scrollContainerRef.current;
             const weekWidth = container.clientWidth;
             container.scrollLeft = currentWeekIndex * weekWidth;
+            setVisibleWeekIndex(currentWeekIndex);
         }
     }, [currentWeekIndex, weeks.length]);
+
+    // Track visible week on scroll
+    const handleScroll = () => {
+        if (!scrollContainerRef.current) return;
+        const container = scrollContainerRef.current;
+        const weekWidth = container.clientWidth;
+        const newIndex = Math.round(container.scrollLeft / weekWidth);
+        if (newIndex !== visibleWeekIndex && newIndex >= 0 && newIndex < weeks.length) {
+            setVisibleWeekIndex(newIndex);
+        }
+    };
 
     const snapToNearestWeek = () => {
         if (!scrollContainerRef.current) return;
@@ -203,10 +225,16 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
 
     return (
         <div className="px-4 pt-6 pb-4 space-y-4">
+            {/* Month Label */}
+            <div className="text-lg font-semibold text-white">
+                {visibleMonth}
+            </div>
+
             {/* Week Timeline */}
             <div
                 ref={scrollContainerRef}
                 className={`flex overflow-x-auto no-scrollbar snap-x snap-mandatory ${isDragging ? 'cursor-grabbing select-none' : 'cursor-grab'}`}
+                onScroll={handleScroll}
                 onMouseDown={handleMouseDown}
                 onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
