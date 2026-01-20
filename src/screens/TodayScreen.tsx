@@ -215,7 +215,7 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                 {weeks.map((week, weekIndex) => (
                     <div
                         key={weekIndex}
-                        className="flex-shrink-0 w-full flex justify-between px-1 py-4 snap-start"
+                        className="flex-shrink-0 w-full flex justify-between px-1 pt-4 pb-2 snap-start"
                     >
                         {week.map((date) => {
                             const dateStr = format(date, 'yyyy-MM-dd');
