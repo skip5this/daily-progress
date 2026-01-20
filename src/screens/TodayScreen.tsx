@@ -190,34 +190,35 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
             >
                 <div className="space-y-3">
                     {isEditMode && (
-                        <div className="flex items-end gap-3 pb-2 border-b border-gray-800">
+                        <div className="flex items-end gap-3 pb-3 mb-1 border-b border-gray-800">
                             <div className="flex-1">
-                                <Input
-                                    label="New metric"
-                                    type="text"
-                                    placeholder="Metric name..."
-                                    value={newMetricName}
-                                    onChange={(e) => setNewMetricName(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === 'Enter') {
-                                            handleAddMetric();
-                                        }
-                                    }}
-                                />
+                                <div className="flex flex-col space-y-1 w-full">
+                                    <label className="text-xs text-white font-medium">Add new metric</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Metric name..."
+                                        value={newMetricName}
+                                        onChange={(e) => setNewMetricName(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleAddMetric();
+                                            }
+                                        }}
+                                        className="bg-[#1a1a1a] border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                                    />
+                                </div>
                             </div>
-                            <Button
-                                size="sm"
-                                variant="secondary"
+                            <button
                                 onClick={handleAddMetric}
                                 disabled={!newMetricName.trim()}
-                                className="mb-0.5"
+                                className="w-10 h-[42px] flex items-center justify-center bg-primary text-primary-foreground rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors"
                             >
-                                <Plus size={16} />
-                            </Button>
+                                <Plus size={20} />
+                            </button>
                         </div>
                     )}
                     {state.metricDefinitions.map((metric) => (
-                        <div key={metric.id} className="flex items-center gap-3">
+                        <div key={metric.id} className="flex items-end gap-3">
                             <div className="flex-1">
                                 <Input
                                     label={metric.name === 'Weight' ? `Weight (${state.settings.weightUnitLabel})` : metric.name}
@@ -229,12 +230,14 @@ export const TodayScreen: React.FC<TodayScreenProps> = ({ onOpenWorkout }) => {
                                 />
                             </div>
                             {isEditMode && (
-                                <button
-                                    onClick={() => handleDeleteMetric(metric.id, metric.name)}
-                                    className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-500 transition-colors mt-5"
-                                >
-                                    <Trash2 size={16} />
-                                </button>
+                                <div className="w-10 h-[42px] flex items-center justify-center">
+                                    <button
+                                        onClick={() => handleDeleteMetric(metric.id, metric.name)}
+                                        className="w-8 h-8 flex items-center justify-center text-gray-600 hover:text-red-500 transition-colors"
+                                    >
+                                        <Trash2 size={16} />
+                                    </button>
+                                </div>
                             )}
                         </div>
                     ))}

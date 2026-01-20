@@ -47,7 +47,11 @@ CREATE OR REPLACE FUNCTION create_default_metric_definitions()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO metric_definitions (user_id, name, order_index, is_active)
-  VALUES (NEW.id, 'Weight', 0, true);
+  VALUES (NEW.id, 'Weight', 0, true)
+  ON CONFLICT (user_id, name) DO NOTHING;
+  RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+  -- Don't block user creation if this fails
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
